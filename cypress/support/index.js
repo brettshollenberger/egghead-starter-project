@@ -18,12 +18,3 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-require('lowdb')
-// require('lowdb/adapters/FileSync')
-
-// const adapter = new FileSync('db.json')
-// const db = low(adapter)
-
-afterEach(() => {
-    db.setState({"todos": []})
-})

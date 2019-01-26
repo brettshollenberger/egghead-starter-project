@@ -6,7 +6,7 @@
 const jsonServer = require('json-server')
 const server = jsonServer.create()
 const router = jsonServer.router('db.json')
-const middlewares = jsonServer.defaults()
+const middlewares = jsonServer.defaults({watch: true})
 
 server.use(middlewares)
 server.use(jsonServer.bodyParser)
@@ -27,6 +27,12 @@ server.put('/api/todos/bulk_update', ({body: { todos }}, res) => {
 server.use(jsonServer.rewriter({
   '/api/*': '/$1'
 }))
+
+server.use((req, res, next) => {
+  router.db.assign(require('require-uncached')('./db.json')).write();
+  // Continue to JSON Server router
+  next()
+});
 
 server.use(router)
 

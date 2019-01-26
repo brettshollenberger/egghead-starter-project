@@ -10,8 +10,24 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
+const db = require('../../hello')
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  on('task', {
+    // deconstruct the individual properties
+    hello ({ greeting, name }) {
+      console.log('%s, %s', greeting, name)
+  
+      return null
+    },
+
+    'db:seed': () => {
+      db.seed({todos: []})
+
+      return null
+    }
+  })
+
 }
