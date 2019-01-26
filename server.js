@@ -11,6 +11,12 @@ const middlewares = jsonServer.defaults({watch: true})
 server.use(middlewares)
 server.use(jsonServer.bodyParser)
 
+server.use((req, res, next) => {
+  router.db.assign(require('require-uncached')('./db.json')).write();
+  // Continue to JSON Server router
+  next()
+});
+
 server.post('/api/todos/bulk_delete', ({body: { ids }}, res) => {
   let todos = router.db.get('todos').filter(todo => !ids.includes(todo.id) ).value()
   router.db.setState({ todos })
@@ -27,12 +33,6 @@ server.put('/api/todos/bulk_update', ({body: { todos }}, res) => {
 server.use(jsonServer.rewriter({
   '/api/*': '/$1'
 }))
-
-server.use((req, res, next) => {
-  router.db.assign(require('require-uncached')('./db.json')).write();
-  // Continue to JSON Server router
-  next()
-});
 
 server.use(router)
 

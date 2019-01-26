@@ -23,8 +23,11 @@ module.exports = (on, config) => {
       return null
     },
 
-    'db:seed': () => {
-      db.seed({todos: []})
+    'db:seed': (inputSeeds) => {
+      let defaultSeed = {todos: []}
+      let seeds = inputSeeds ? inputSeeds : defaultSeed;
+
+      db.seed(seeds)
 
       return null
     }

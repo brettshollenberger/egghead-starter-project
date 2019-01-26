@@ -23,3 +23,27 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+const _ = require("lodash")
+
+function* nextIdGen() {
+    let id = 0;
+
+    while (true) {
+        yield id += 1;
+
+        if (id > 10000) { id = 0; }
+    }
+}
+
+let nextId = nextIdGen();
+
+Cypress.Commands.add("seed", (seeds) => {
+    let mappedSeeds = seeds.map((seed) => {
+        return {
+            id: _.get(seed, 'id', nextId.next().value),
+            text: _.get(seed, 'text', 'Hello World'),
+            completed: _.get(seed, 'completed', false)
+        }
+    })
+    cy.task('db:seed', {todos: mappedSeeds})
+})
