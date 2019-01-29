@@ -1,3 +1,5 @@
+import axios from "axios";
+
 context('Todos', () => {
     it('properly fills in seeds, and displays them appropriately', () => {
         cy.seed([{'text': "Hello World"}, {'text': 'Goodnight Moon', completed: true}])
@@ -97,5 +99,122 @@ context('Todos', () => {
             }])
 
         })
+    })
+
+    function stubResponse(status, data) {
+        return {
+            "data": data,
+            "status": status,
+            "statusText": "Created",
+            "headers": {
+                "pragma": "no-cache",
+                "content-type": "application/json; charset=utf-8",
+                "location": "http://localhost:3001/api/todos/2",
+                "cache-control": "no-cache",
+                "expires": "-1"
+            },
+            "config": {
+                "transformRequest": {},
+                "transformResponse": {},
+                "timeout": 0,
+                "xsrfCookieName": "XSRF-TOKEN",
+                "xsrfHeaderName": "X-XSRF-TOKEN",
+                "maxContentLength": -1,
+                "headers": {
+                "Accept": "application/json, text/plain, */*",
+                "Content-Type": "application/json;charset=utf-8"
+                },
+                "method": "post",
+                "url": "http://localhost:3001/api/todos",
+                "data": "{\"text\":\"2nd Todo\",\"completed\":false}"
+            },
+            "request": {
+                "method": "POST",
+                "url": "http://localhost:3001/api/todos",
+                "id": "xhr26"
+            }
+        }
+    }
+    it('stubs out requests when fail', () => {
+        cy.seed([{'text': "Hello World"}])
+        cy.visit("/", {
+            onLoad: (win) => {
+                let stub = win.axios.post = cy.stub(win.axios, 'post')
+
+                stub.onCall(0).rejects()
+                stub.onCall(1).rejects()
+                stub.onCall(2).rejects()
+            }
+        })
+
+        // Assert there is only one item
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 1)
+
+        cy.store().should('deep.equal', {
+            todos: [{
+                id: 1,
+                text: 'Hello World',
+                completed: false
+            }],
+            visibilityFilter: 'show_all'
+        })
+
+        cy.get('.new-todo').type('2nd Todo{enter}')
+
+        cy.store().should('deep.equal', {
+            todos: [{
+                id: 1,
+                text: 'Hello World',
+                completed: false
+            }],
+            visibilityFilter: 'show_all'
+        })
+
+    })
+
+    it('stubs out requests when success', () => {
+        cy.seed([{'text': "Hello World"}])
+        cy.visit("/", {
+            onLoad: (win) => {
+                let stub = win.axios.post = cy.stub(win.axios, 'post')
+
+                stub.onCall(0).rejects()
+                stub.onCall(1).rejects()
+                stub.onCall(2).resolves(stubResponse(200, {}))
+            }
+        })
+
+        // Assert there is only one item
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 1)
+
+        cy.store().should('deep.equal', {
+            todos: [{
+                id: 1,
+                text: 'Hello World',
+                completed: false
+            }],
+            visibilityFilter: 'show_all'
+        })
+
+        cy.get('.new-todo').type('2nd Todo{enter}')
+
+        // It does not remove the old todo
+        cy.store().should('deep.equal', {
+            todos: [{
+                id: 1,
+                text: 'Hello World',
+                completed: false
+            }, {
+                id: 2,
+                text: '2nd Todo',
+                completed: false
+            }],
+            visibilityFilter: 'show_all'
+        })
+
     })
 })

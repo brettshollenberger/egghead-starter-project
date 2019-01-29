@@ -23,6 +23,8 @@ export default function todos(state = initialState, action) {
           text: action.text
         }
       ]
+    case 'ADD_TODO_FAIL':
+      return state.filter(todo => todo.text !== action.text)
 
     case DELETE_TODO:
       return state.filter(todo =>

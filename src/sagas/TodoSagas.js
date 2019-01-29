@@ -1,10 +1,24 @@
-import { takeEvery, takeLatest, put, all, select } from "redux-saga/effects";
+import { takeEvery, takeLatest, put, all, select, retry } from "redux-saga/effects";
 import axios from "axios";
+
+if (window.Cypress) {
+  window.axios = axios
+}
 
 function getApiUrl() {
   return window.REACT_APP_API_URL ? window.REACT_APP_API_URL : 'http://localhost:3000'
 }
-export function* createTodo(action) {
+
+function* createTodo(data) {
+  try {
+    const response = yield retry(3, 0, attemptCreateTodo, data)
+    yield put({ type: 'CREATE_TODO_SUCCESS', payload: response })
+  } catch(error) {
+    yield put({ ...data, type: 'ADD_TODO_FAIL' })
+  }
+}
+
+export function* attemptCreateTodo(action) {
   yield axios.post(`${getApiUrl()}/api/todos`, {text: action.text, completed: false})
 }
 

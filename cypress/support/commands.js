@@ -35,9 +35,9 @@ function* nextIdGen() {
     }
 }
 
-let nextId = nextIdGen();
-
 Cypress.Commands.add("seed", (seeds) => {
+    let nextId = nextIdGen();
+
     let mappedSeeds = seeds.map((seed) => {
         return {
             id: _.get(seed, 'id', nextId.next().value),
