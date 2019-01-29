@@ -3,7 +3,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 
 const adapter = new FileSync('db.test.json')
 const db = low(adapter)
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 
 module.exports = {
     seed: function(state) {
