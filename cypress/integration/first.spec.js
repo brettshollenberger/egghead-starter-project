@@ -79,5 +79,23 @@ context('Todos', () => {
             .should('not.have.class', 'completed')
             .find('.toggle')
             .should('not.be.checked')
+
+        // Asserting on db snapshots directly from the backend
+        cy.task('db:snapshot').then((dbSnapshot) => {
+            assert.deepEqual(dbSnapshot, [{
+                id: 1,
+                text: 'Hello World',
+                completed: false
+            }, {
+                id: 2,
+                text: 'Goodnight Moon',
+                completed: true
+            }, {
+                id: 3,
+                text: '3rd Todo',
+                completed: false
+            }])
+
+        })
     })
 })

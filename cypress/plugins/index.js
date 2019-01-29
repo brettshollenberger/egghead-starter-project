@@ -30,6 +30,10 @@ module.exports = (on, config) => {
       db.seed(seeds)
 
       return null
+    },
+
+    'db:snapshot': () => {
+      return db.snapshot()
     }
   })
 
