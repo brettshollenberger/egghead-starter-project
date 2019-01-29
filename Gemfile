@@ -1,2 +1,5 @@
 source 'https://rubygems.org'
 gem 'foreman'
+gem 'pry'
+gem 'rake'
+gem 'rb-readline'

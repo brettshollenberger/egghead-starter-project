@@ -1,14 +1,3 @@
 {
-  "todos": [
-    {
-      "id": 1,
-      "text": "Hello World",
-      "completed": false
-    },
-    {
-      "id": 2,
-      "text": "Goodnight Moon",
-      "completed": true
-    }
-  ]
+  "todos": []
 }

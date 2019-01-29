@@ -30,6 +30,12 @@ module.exports = (on, config) => {
       db.seed(seeds)
 
       return null
+    },
+
+    'rubySeed': (seeds) => {
+      db.rbSeed(seeds)
+
+      return null
     }
   })
 
