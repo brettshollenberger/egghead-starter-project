@@ -20,3 +20,9 @@ render(
   </Provider>,
   document.getElementById('root')
 )
+
+if (window.Cypress) {
+  window.store = store
+  window.sagas = rootSaga
+  window.sagaMiddleware = sagaMiddleware
+}

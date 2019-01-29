@@ -8,7 +8,12 @@
     {
       "id": 2,
       "text": "Goodnight Moon",
-      "completed": true
+      "completed": false
+    },
+    {
+      "text": "3rd Todo",
+      "completed": false,
+      "id": 3
     }
   ]
 }

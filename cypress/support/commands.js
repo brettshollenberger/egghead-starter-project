@@ -47,3 +47,7 @@ Cypress.Commands.add("seed", (seeds) => {
     })
     cy.task('db:seed', {todos: mappedSeeds})
 })
+
+Cypress.Commands.add("store", (seeds) => {
+    cy.window().its('store').invoke('getState')
+})
