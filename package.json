@@ -24,11 +24,12 @@
   },
   "scripts": {
     "api": "node --inspect server.js",
-    "start": "react-scripts start",
+    "api-test": "NODE_ENV=test node server.js",
+    "start": "REACT_APP_API_URL=http://localhost:3000 react-scripts start",
+    "start-test": "REACT_APP_API_URL=http://localhost:3001 react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "test": "react-scripts test --env=node",
-    "hello": "node hello.js"
+    "test": "react-scripts test --env=node"
   },
   "browserslist": [
     ">0.2%",

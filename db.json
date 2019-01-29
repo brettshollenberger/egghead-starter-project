@@ -1,14 +1,14 @@
 {
   "todos": [
     {
-      "id": 1,
-      "text": "Hello World",
-      "completed": false
+      "text": "Development",
+      "completed": true,
+      "id": 1
     },
     {
-      "id": 2,
-      "text": "Goodnight Moon",
-      "completed": true
+      "text": "Environment",
+      "completed": false,
+      "id": 2
     }
   ]
 }
