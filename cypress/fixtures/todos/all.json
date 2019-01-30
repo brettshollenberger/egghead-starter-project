@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "text": "Fixture data",
+        "complete": false
+    },
+    {
+        "id": 2,
+        "text": "Testing it out",
+        "complete": true
+    }
+]
