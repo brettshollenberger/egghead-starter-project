@@ -135,17 +135,11 @@ context('Todos', () => {
             }
         }
     }
-    it('stubs out requests when fail', () => {
-        cy.seed([{'text': "Hello World"}])
-        cy.visit("/", {
-            onLoad: (win) => {
-                let stub = win.axios.post = cy.stub(win.axios, 'post')
 
-                stub.onCall(0).rejects()
-                stub.onCall(1).rejects()
-                stub.onCall(2).rejects()
-            }
-        })
+    // Using Cypress to assert multiple backend failures
+    it('stubs out when request retries fail', () => {
+        cy.seed([{'text': "Hello World"}])
+        cy.visit("/")
 
         // Assert there is only one item
         cy.get('[data-cy=todo-list]')
@@ -161,7 +155,56 @@ context('Todos', () => {
             visibilityFilter: 'show_all'
         })
 
+        // Cy.server can stub any responses from the backend
+        cy.server()
+
+        // This time, we're going to intercept the request
+        // and send back our own responses without it
+        // hitting the backend
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 500,
+            response: '',
+        }).as('createTodo')
+
         cy.get('.new-todo').type('2nd Todo{enter}')
+
+        // Locally, the todo list length is updated,
+        // while the backend attempts to create the todo
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 2)
+
+        // Each time we wait for an alias, Cypress
+        // will reply with that response, although
+        // it will only evaluate the alias once
+        cy.wait('@createTodo')
+
+        // Let's have the backend return a 2nd 500 error
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 500,
+            response: {},
+        }).as('createTodo2')
+
+        cy.wait('@createTodo2')
+
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 500,
+            response: {},
+        }).as('createTodo3')
+
+        cy.wait('@createTodo3')
+
+        // Now, we expect the todo to be removed from
+        // the frontend
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 1)
 
         cy.store().should('deep.equal', {
             todos: [{
@@ -174,17 +217,10 @@ context('Todos', () => {
 
     })
 
-    it('stubs out requests when success', () => {
+    // Using Cypress to assert retries succeed eventually
+    it('stubs out when request retries eventually succeed', () => {
         cy.seed([{'text': "Hello World"}])
-        cy.visit("/", {
-            onLoad: (win) => {
-                let stub = win.axios.post = cy.stub(win.axios, 'post')
-
-                stub.onCall(0).rejects()
-                stub.onCall(1).rejects()
-                stub.onCall(2).resolves(stubResponse(200, {}))
-            }
-        })
+        cy.visit("/")
 
         // Assert there is only one item
         cy.get('[data-cy=todo-list]')
@@ -200,9 +236,58 @@ context('Todos', () => {
             visibilityFilter: 'show_all'
         })
 
+        // Cy.server can stub any responses from the backend
+        cy.server()
+
+        // This time, we're going to intercept the request
+        // and send back our own responses without it
+        // hitting the backend
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 500,
+            response: '',
+        }).as('createTodo')
+
         cy.get('.new-todo').type('2nd Todo{enter}')
 
-        // It does not remove the old todo
+        // The todo is added to the frontend
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 2)
+
+        // Each time we wait for an alias, Cypress
+        // will reply with that response, although
+        // it will only evaluate the alias once
+        cy.wait('@createTodo')
+
+        // Let's have the backend return a 2nd 500 error
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 500,
+            response: {},
+        }).as('createTodo2')
+
+        cy.wait('@createTodo2')
+
+        // Finally, the request succeeds using the retry
+        // mechanic in Redux Saga
+        cy.route({
+            method: 'POST',
+            url: '/api/todos',
+            status: 200,
+            response: {},
+        }).as('createTodo3')
+
+        cy.wait('@createTodo3')
+
+        // The Todo is still on the frontend,
+        // because it was a successful request
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 2)
+
         cy.store().should('deep.equal', {
             todos: [{
                 id: 1,
@@ -217,4 +302,5 @@ context('Todos', () => {
         })
 
     })
+
 })
