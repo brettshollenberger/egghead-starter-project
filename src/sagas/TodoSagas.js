@@ -8,7 +8,7 @@ function getApiUrl() {
 function* createTodo(data) {
   try {
     const response = yield retry(3, 1000, attemptCreateTodo, data)
-    yield put({ type: 'ADD_TODO_SUCCESS', payload: response })
+    yield put({ type: 'ADD_TODO_SUCCESS' })
   } catch(error) {
     yield put({ ...data, type: 'ADD_TODO_FAIL' })
   }

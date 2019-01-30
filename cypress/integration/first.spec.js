@@ -101,41 +101,6 @@ context('Todos', () => {
         })
     })
 
-    function stubResponse(status, data) {
-        return {
-            "data": data,
-            "status": status,
-            "statusText": "Created",
-            "headers": {
-                "pragma": "no-cache",
-                "content-type": "application/json; charset=utf-8",
-                "location": "http://localhost:3001/api/todos/2",
-                "cache-control": "no-cache",
-                "expires": "-1"
-            },
-            "config": {
-                "transformRequest": {},
-                "transformResponse": {},
-                "timeout": 0,
-                "xsrfCookieName": "XSRF-TOKEN",
-                "xsrfHeaderName": "X-XSRF-TOKEN",
-                "maxContentLength": -1,
-                "headers": {
-                "Accept": "application/json, text/plain, */*",
-                "Content-Type": "application/json;charset=utf-8"
-                },
-                "method": "post",
-                "url": "http://localhost:3001/api/todos",
-                "data": "{\"text\":\"2nd Todo\",\"completed\":false}"
-            },
-            "request": {
-                "method": "POST",
-                "url": "http://localhost:3001/api/todos",
-                "id": "xhr26"
-            }
-        }
-    }
-
     // Using Cypress to assert multiple backend failures
     it('stubs out when request retries fail', () => {
         cy.seed([{'text': "Hello World"}])
