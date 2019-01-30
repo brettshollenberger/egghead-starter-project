@@ -179,7 +179,38 @@ context('Todos', () => {
             }],
             visibilityFilter: 'show_all'
         })
+    })
 
+    // Fixture data
+    it.only('mocks out the root request', () => {
+        // This time, we don't seed anything at all in the test database
+        cy.server()
+        cy.route('/api/todos', 'fixture:todos/all.json').as('preload')
+        cy.visit("/")
+        cy.wait('@preload')
+
+        cy.fixture('todos/all.json').then((fixture) => {
+            cy.store().should('deep.equal', {
+                todos: fixture,
+                visibilityFilter: 'show_all'
+            })
+        })
+
+        cy.get('[data-cy=todo-list]')
+            .children()
+            .should('have.length', 2)
+
+        cy.get('[data-cy=todo-1]')
+            .should('have.text', "Fixture data")
+            .should('not.have.class', 'completed')
+            .find('.toggle')
+            .should('not.be.checked')
+
+        cy.get('[data-cy=todo-2]')
+            .should('have.text', "Testing it out")
+            .should('not.have.class', 'completed')
+            .find('.toggle')
+            .should('not.be.checked')
     })
 
     // Using Cypress to assert retries succeed eventually

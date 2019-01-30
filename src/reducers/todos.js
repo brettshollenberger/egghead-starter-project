@@ -5,6 +5,7 @@ import {
   EDIT_TODO,
   LOCAL_CLEAR_COMPLETED,
   BULK_EDIT_TODOS,
+  ADD_TODO_FAIL,
 } from '../constants/ActionTypes'
 
 const initialState = [ ]
@@ -23,7 +24,8 @@ export default function todos(state = initialState, action) {
           text: action.text
         }
       ]
-    case 'ADD_TODO_FAIL':
+
+    case ADD_TODO_FAIL:
       return state.filter(todo => todo.text !== action.text)
 
     case DELETE_TODO:
